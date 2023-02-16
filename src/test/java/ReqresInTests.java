@@ -16,6 +16,7 @@ public class ReqresInTests {
         when().
                 get("https://reqres.in/api/users/2").
         then().
+                log().body().
                 statusCode(200).
                 and().
                 body("data.id", is(2),
