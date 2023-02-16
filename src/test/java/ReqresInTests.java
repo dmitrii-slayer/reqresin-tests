@@ -9,7 +9,7 @@ import static org.hamcrest.Matchers.*;
 public class ReqresInTests {
 
     @Test
-    public void singleUserTest() {
+    public void getSingleUserTest() {
         // with soft asserts
         given().
                 log().uri().
