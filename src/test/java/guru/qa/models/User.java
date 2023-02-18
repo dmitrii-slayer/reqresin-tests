@@ -7,6 +7,7 @@ import lombok.Data;
 public class User {
     private Long id;
     private String name;
+    private String job;
     @SerializedName("first_name")
     private String firstName;
     @SerializedName("last_name")
@@ -14,4 +15,5 @@ public class User {
     private String email;
     @SerializedName("avatar")
     private String avatarLink;
+    private String createdAt;
 }

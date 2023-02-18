@@ -6,7 +6,6 @@ import guru.qa.models.User;
 
 import static guru.qa.Specs.*;
 import static io.restassured.RestAssured.given;
-import static io.restassured.http.ContentType.JSON;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
 //import static org.assertj.core.api.Assertions.assertThat;
@@ -31,10 +30,10 @@ public class LombokTests {
 
         User singleUser = user.getUser();
 
-        assertAll("user info",
-                () -> assertEquals("janet@reqres", singleUser.getEmail()),
-                () -> assertEquals("my name", singleUser.getFirstName()),
-                () -> assertEquals("asd", singleUser.getLastName()),
+        assertAll("get user info",
+                () -> assertEquals("janet.weaver@reqres.in", singleUser.getEmail()),
+                () -> assertEquals("Janet", singleUser.getFirstName()),
+                () -> assertEquals("Weaver", singleUser.getLastName()),
                 () -> assertNotNull(singleUser.getAvatarLink())
         );
 
@@ -52,9 +51,6 @@ public class LombokTests {
                         get("/users/23").
                 then().
                         statusCode(404).
-//                        body("isEmpty()", Matchers.is(true)). // maybe
-//                        body("$", Matchers.empty()). // no
-//                        body("", Matchers.empty()). // no
                         extract().response().asString();
 
         assertEquals("{}", response); // JUnit assertion
@@ -63,39 +59,53 @@ public class LombokTests {
 
     @Test
     public void createUserTest() {
-        String data = "{ \"name\": \"morpheus\", \"job\": \"leader\" }";
+        // prepare user
+        String name = "morpheus";
+        String job = "leader";
+        User user = new User();
+        user.setName(name);
+        user.setJob(job);
 
+        User createdUser =
         given().
                 spec(requestSpecWithData).
-                body(data).
+                body(user).
         when().
                 post("/users").
         then().
                 log().status().
                 log().body().
                 statusCode(201).
-                body("name", is("morpheus"),
-                        "job", is("leader"),
-                        "id", is(notNullValue()),
-                        "createdAt", is(notNullValue()));
+                extract().as(User.class);
+
+        assertAll("created user info",
+                () -> assertTrue(createdUser.getId() > 0),
+                () -> assertEquals(name, createdUser.getName()),
+                () -> assertEquals(job, createdUser.getJob()),
+                () -> assertNotNull(createdUser.getCreatedAt())
+        );
     }
 
     @Test
     public void putUserTest() {
-        String data = "{ \"name\": \"morpheus\", \"job\": \"zion resident\" }";
+        // prepare user
+        String name = "morpheus";
+        String job = "zion resident";
+        User user = new User();
+        user.setName(name);
+        user.setJob(job);
 
         given().
-                log().uri().
-                contentType(JSON).
-                body(data).
-                when().
-                put("https://reqres.in/api/users/2").
-                then().
+                spec(requestSpecWithData).
+                body(user).
+        when().
+                put("/users/2").
+        then().
                 log().status().
                 log().body().
                 statusCode(200).
-                body("name", is("morpheus"),
-                        "job", is("zion resident"),
+                body("name", is(name),
+                        "job", is(job),
                         "updatedAt", is(notNullValue()));
     }
 
@@ -104,12 +114,11 @@ public class LombokTests {
         String data = "{ \"name\": \"morpheus\", \"job\": \"salesman\" }";
 
         given().
-                log().uri().
-                contentType(JSON).
+                spec(requestSpecWithData).
                 body(data).
-                when().
-                patch("https://reqres.in/api/users/2").
-                then().
+        when().
+                patch("/users/2").
+        then().
                 log().status().
                 log().body().
                 statusCode(200).
@@ -122,9 +131,9 @@ public class LombokTests {
     public void deleteUserTest() {
         given().
                 log().uri().
-                when().
+        when().
                 delete("https://reqres.in/api/users/2").
-                then().
+        then().
                 log().status().
                 log().body().
                 statusCode(204).
