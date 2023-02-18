@@ -4,11 +4,10 @@ import org.junit.jupiter.api.Test;
 import guru.qa.models.UserData;
 import guru.qa.models.User;
 
+import static guru.qa.Specs.*;
 import static io.restassured.RestAssured.given;
 import static io.restassured.http.ContentType.JSON;
 import static org.hamcrest.Matchers.*;
-import static guru.qa.Specs.requestSpec;
-import static guru.qa.Specs.responseSpec;
 import static org.junit.jupiter.api.Assertions.*;
 //import static org.assertj.core.api.Assertions.assertThat;
 
@@ -20,7 +19,7 @@ public class LombokTests {
         // with soft asserts (assertAll)
         // request spec in given()
         UserData user =
-        given(requestSpec).
+        given(requestSpecGet).
         when().
                 get("/users/2").
         then().
@@ -45,17 +44,18 @@ public class LombokTests {
 
     @Test
     public void singleUserNotFoundTest() {
+        // request spec in spec()
         String response =
                 given().
-                        log().uri().
-                        when().
-                        get("https://reqres.in/api/users/23").
-                        then().
+                        spec(requestSpecGet).
+                when().
+                        get("/users/23").
+                then().
                         statusCode(404).
-//                body("isEmpty()", Matchers.is(true)). // maybe
-//                body("$", Matchers.empty()). // no
-//                body("", Matchers.empty()). // no
-        extract().response().asString();
+//                        body("isEmpty()", Matchers.is(true)). // maybe
+//                        body("$", Matchers.empty()). // no
+//                        body("", Matchers.empty()). // no
+                        extract().response().asString();
 
         assertEquals("{}", response); // JUnit assertion
 //        assertThat(response).isEqualTo("{}"); // AssertJ assertion
@@ -66,12 +66,11 @@ public class LombokTests {
         String data = "{ \"name\": \"morpheus\", \"job\": \"leader\" }";
 
         given().
-                log().uri().
-                contentType(JSON).
+                spec(requestSpecWithData).
                 body(data).
-                when().
-                post("https://reqres.in/api/users").
-                then().
+        when().
+                post("/users").
+        then().
                 log().status().
                 log().body().
                 statusCode(201).

@@ -9,11 +9,17 @@ import io.restassured.specification.ResponseSpecification;
 import static io.restassured.RestAssured.with;
 
 public class Specs {
-    public static RequestSpecification requestSpec = with()
+    public static RequestSpecification requestSpecWithData = with()
             .baseUri("https://reqres.in")
             .basePath("/api")
             .log().all()
             .contentType(ContentType.JSON);
+
+    public static RequestSpecification requestSpecGet = with()
+            .baseUri("https://reqres.in")
+            .basePath("/api")
+            .log().method()
+            .log().uri();
 
     public static ResponseSpecification responseSpec = new ResponseSpecBuilder()
             .log(LogDetail.STATUS)
