@@ -31,6 +31,7 @@ public class LombokTests {
         User singleUser = user.getUser();
 
         assertAll("get user info",
+                () -> assertEquals(2, singleUser.getId()),
                 () -> assertEquals("janet.weaver@reqres.in", singleUser.getEmail()),
                 () -> assertEquals("Janet", singleUser.getFirstName()),
                 () -> assertEquals("Weaver", singleUser.getLastName()),
