@@ -1,5 +1,6 @@
 package guru.qa;
 
+import io.restassured.filter.log.LogDetail;
 import org.junit.jupiter.api.Test;
 import guru.qa.models.UserData;
 import guru.qa.models.User;
@@ -17,8 +18,8 @@ public class LombokTests {
     public void getSingleUserTest() {
         // with soft asserts (assertAll)
         // request spec in given()
-        UserData user =
-        given(requestSpecGet).
+        UserData userData =
+        given(requestSpecNoData).
         when().
                 get("/users/2").
         then().
@@ -28,18 +29,16 @@ public class LombokTests {
                 and().
                 extract().as(UserData.class);
 
-        User singleUser = user.getUser();
+        User singleUser = userData.getUser();
 
-        assertAll("get user info",
+        assertAll("get single user info",
                 () -> assertEquals(2, singleUser.getId()),
                 () -> assertEquals("janet.weaver@reqres.in", singleUser.getEmail()),
                 () -> assertEquals("Janet", singleUser.getFirstName()),
                 () -> assertEquals("Weaver", singleUser.getLastName()),
                 () -> assertNotNull(singleUser.getAvatarLink())
         );
-
 //        assertThat(user.getUser().getFirstName()).isEqualTo("Janet");
-
     }
 
     @Test
@@ -47,7 +46,7 @@ public class LombokTests {
         // request spec in spec()
         String response =
                 given().
-                        spec(requestSpecGet).
+                        spec(requestSpecNoData).
                 when().
                         get("/users/23").
                 then().
@@ -112,31 +111,36 @@ public class LombokTests {
 
     @Test
     public void patchUserTest() {
-        String data = "{ \"name\": \"morpheus\", \"job\": \"salesman\" }";
+        // prepare user
+        String name = "morpheus";
+        String job = "salesman";
+        User user = new User();
+        user.setName(name);
+        user.setJob(job);
 
         given().
                 spec(requestSpecWithData).
-                body(data).
+                body(user).
         when().
                 patch("/users/2").
         then().
-                log().status().
+                spec(responseSpec).
                 log().body().
                 statusCode(200).
-                body("name", is("morpheus"),
-                        "job", is("salesman"),
+                body("name", is(name),
+                        "job", is(job),
                         "updatedAt", is(notNullValue()));
     }
 
     @Test
     public void deleteUserTest() {
         given().
-                log().uri().
+                spec(requestSpecNoData).
         when().
-                delete("https://reqres.in/api/users/2").
+                delete("/users/2").
         then().
                 log().status().
-                log().body().
+                log().ifValidationFails(LogDetail.ALL).
                 statusCode(204).
                 body(blankString());
     }
