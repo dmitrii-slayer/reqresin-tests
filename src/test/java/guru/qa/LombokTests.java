@@ -49,6 +49,26 @@ public class LombokTests {
     }
 
     @Test
+    public void getUsersWithGroovyTest() {
+        // using groovy
+        // request spec in given()
+        given(requestSpecNoData).
+        when().
+                get("/users?page=2").
+        then().
+                spec(responseSpec).
+                log().body().
+                and().
+                // check that user with id 12's email is ...
+                body("data.findAll { it.id == 12 }.email.flatten()", hasItem("rachel.howell@reqres.in"),
+                        // check that all users have ID > 0
+                        "data.findAll { it.id < 1}", hasSize(0),
+                        // check that Ferguson and Lawson are among users with id < 10
+                        "data.findAll { it.id < 10 }.last_name.flatten()", hasItems("Ferguson", "Lawson"));
+    }
+
+
+    @Test
     public void singleUserNotFoundTest() {
         // request spec in spec()
         String response =
