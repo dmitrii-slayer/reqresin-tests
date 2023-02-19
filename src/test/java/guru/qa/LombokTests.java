@@ -1,6 +1,8 @@
 package guru.qa;
 
+import io.restassured.RestAssured;
 import io.restassured.filter.log.LogDetail;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import guru.qa.models.UserData;
 import guru.qa.models.User;
@@ -13,6 +15,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class LombokTests {
 
+    @BeforeAll
+    public static void setUp() {
+        RestAssured.baseURI = "https://reqres.in";
+        RestAssured.basePath = "/api";
+    }
 
     @Test
     public void getSingleUserTest() {
