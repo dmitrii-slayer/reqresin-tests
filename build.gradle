@@ -1,5 +1,6 @@
 plugins {
     id 'java-library'
+    id "io.freefair.lombok" version "6.0.0-m2"
 }
 
 group 'guru.qa'
@@ -9,14 +10,22 @@ repositories {
     mavenCentral()
 }
 
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
 dependencies {
     testImplementation(
             "io.rest-assured:rest-assured:5.3.0",
             "org.junit.jupiter:junit-jupiter:5.8.2",
-            'org.assertj:assertj-core:3.23.1'
+            'org.assertj:assertj-core:3.23.1',
+            'com.google.code.gson:gson:2.10'
     )
     testRuntimeOnly(
             'org.slf4j:slf4j-simple:2.0.5')
+}
+
+compileTestJava {
+    options.encoding = 'UTF-8'
 }
 
 test {
