@@ -1,6 +1,7 @@
 plugins {
     id 'java-library'
     id "io.freefair.lombok" version "6.0.0-m2"
+    id 'io.qameta.allure' version '2.10.0'
 }
 
 group 'guru.qa'
@@ -13,15 +14,34 @@ repositories {
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
+def allureVersion = "2.19.0",
+    assertJVersion = "3.23.1",
+    slf4jVersion = "2.0.5"
+
+allure {
+    report {
+        version.set(allureVersion)
+    }
+    adapter {
+        aspectjWeaver.set(true)
+        frameworks {
+            junit5 {
+                adapterVersion.set(allureVersion)
+            }
+        }
+    }
+}
+
 dependencies {
     testImplementation(
             "io.rest-assured:rest-assured:5.3.0",
+            "io.qameta.allure:allure-rest-assured:$allureVersion",
             "org.junit.jupiter:junit-jupiter:5.8.2",
-            'org.assertj:assertj-core:3.23.1',
-            'com.google.code.gson:gson:2.10'
+            "org.assertj:assertj-core:$assertJVersion",
+            "com.google.code.gson:gson:2.10"
     )
     testRuntimeOnly(
-            'org.slf4j:slf4j-simple:2.0.5')
+            "org.slf4j:slf4j-simple:$slf4jVersion")
 }
 
 compileTestJava {

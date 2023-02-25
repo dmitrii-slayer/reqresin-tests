@@ -3,25 +3,30 @@ package guru.qa;
 import io.restassured.RestAssured;
 import io.restassured.filter.log.LogDetail;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import guru.qa.models.UserData;
 import guru.qa.models.User;
 
 import static guru.qa.Specs.*;
+import static guru.qa.helpers.CustomApiListener.withCustomTemplates;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
 //import static org.assertj.core.api.Assertions.assertThat;
 
+@DisplayName("Тесты на reqres.in REST API")
 public class LombokTests {
 
     @BeforeAll
     public static void setUp() {
         RestAssured.baseURI = "https://reqres.in";
         RestAssured.basePath = "/api";
+        RestAssured.filters(withCustomTemplates());
     }
 
     @Test
+    @DisplayName("Проверка получения информации по одному пользователю")
     public void getSingleUserTest() {
         // with soft asserts (assertAll)
         // request spec in given()
@@ -49,6 +54,7 @@ public class LombokTests {
     }
 
     @Test
+    @DisplayName("Проверка получения списка пользователей")
     public void getUsersWithGroovyTest() {
         // using groovy
         // request spec in given()
@@ -69,6 +75,7 @@ public class LombokTests {
 
 
     @Test
+    @DisplayName("Проверка получения информации по несуществующему пользователю")
     public void singleUserNotFoundTest() {
         // request spec in spec()
         String response =
@@ -85,6 +92,7 @@ public class LombokTests {
     }
 
     @Test
+    @DisplayName("Проверка создания пользователя")
     public void createUserTest() {
         // prepare user
         String name = "morpheus";
@@ -114,6 +122,7 @@ public class LombokTests {
     }
 
     @Test
+    @DisplayName("Проверка обновления пользователя PUT")
     public void putUserTest() {
         // prepare user
         String name = "morpheus";
@@ -137,6 +146,7 @@ public class LombokTests {
     }
 
     @Test
+    @DisplayName("Проверка обновления пользователя PATCH")
     public void patchUserTest() {
         // prepare user
         String name = "morpheus";
@@ -160,6 +170,7 @@ public class LombokTests {
     }
 
     @Test
+    @DisplayName("Проверка удаления пользователя")
     public void deleteUserTest() {
         given().
                 spec(requestSpecNoData).
