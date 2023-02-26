@@ -12,7 +12,7 @@ import static io.restassured.RestAssured.with;
 public class Specs {
     // using builder
     public static RequestSpecification requestSpecWithData = new RequestSpecBuilder()
-            // baseUri и basePath вынес в setUp()
+            // baseUri and basePath moved to setUp()
 //            .setBaseUri("https://reqres.in")
 //            .setBasePath("/api")
             .setAccept(ContentType.JSON)
@@ -23,7 +23,7 @@ public class Specs {
 
     // using with()
     public static RequestSpecification requestSpecNoData = with()
-            // baseUri и basePath вынес в setUp()
+            // baseUri and basePath moved to setUp()
 //            .baseUri("https://reqres.in")
 //            .basePath("/api")
             .accept(ContentType.JSON)
